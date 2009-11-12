@@ -1,0 +1,5 @@
+<div class="before_entries"><%= Plugin.render_hook(:before_entries, @entries) %></div>
+<% @entries.each do |entry| %>
+  <%= @entry = entry; render_view(:entry) %>
+<% end %>
+<div class="after_entries"><%= Plugin.render_hook(:after_entries, @entries) %></div>

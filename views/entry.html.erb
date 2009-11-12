@@ -1,0 +1,5 @@
+<div class="entry">
+  <div class="before_entry"><%= Plugin.render_hook(:before_entry, @entry) %></div>
+  <div class="body"><%= @entry.to_html %></div>
+  <div class="after_entry"><%= Plugin.render_hook(:after_entry, @entry) %></div>
+</div>

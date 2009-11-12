@@ -1,0 +1,23 @@
+<div class="header">
+  <h1><%= config[:title] %></h1>
+  <% if action_name == :list and params[:date].nil? %>
+    <blockquote><p><!-- トップページ冒頭のメッセージ -->
+    このサイトはBilboという日記システムで運営されています。
+    Bilboについて、詳しくは<a href="?about">About</a>をご覧ください。
+    （このメッセージを消すには<a href="?flavour">config/flavour.html.erb</a>
+    を編集してください。）
+    </p></blockquote>
+  <% else %>
+    <blockquote><p><a href="./">トップへ</a></p></blockquote>
+  <% end %>
+  <div class="menus">
+    <%= link_to :Latest %>
+    <%= link_to :Archives, :action => 'archives' %>
+    <%= link_to :About, :action => 'about' %>
+  </div>
+</div>
+__CONTENT__  # DON'T DELETE!
+<div class="footer">
+  <a href="http://dgames.jp/bilbo/">Bilbo</a> <%=h BILBO_VERSION %> on
+  <a href="http://www.ruby-lang.org/">Ruby</a> <%=h RUBY_VERSION %>
+</div>

@@ -1,0 +1,25 @@
+![開発ログ]開発メモ
+
+エントリ検索方法のアイデアをメモするだけのつもりが、
+いつの間にか、 ERB や CGI を動作するようにしてしまった。
+
+ruby でものを作るのはやっぱり楽しい。
+
+--
+
+すでに 69 行か。
+
+--
+
+entry の前後に 
+@before_entry,
+@after_entry
+を入れたけど、これだと entry オブジェクトを受け取るプラグインが書けないんだよなあ。どうしよう。
+ちょっと考えないといけないな。
+entry がないとツッコミも挿入できないよな。
+
+ @arter_entry << lambda {|e| e.update_at }
+ 
+ add_render_plugin(:after_entry, priority) {|e| "<div>#{e.update_at}</div>" }
+ 
+ <%= render_plugin(:after_entry) %>

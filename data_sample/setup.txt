@@ -1,0 +1,114 @@
+!インストール手順
+
+BilboをCGIとして設置する方法を紹介します。
+サーバーでシェルが使える場合は、setup.rbスクリプトを使うことで、簡単にCGI環境を構築することができます。
+
+!まとめ
+
+以下はRubyist向けの手順概要。
+
+# svn co ...
+# ./setup.rb CGIDIR
+# CGIDIR/.htaccessを適当に編集
+# CGIDIR/bilborcを適当に編集
+
+!ダウンロード
+
+準備中。
+
+ svn co ...
+
+svnコマンドが使えない場合。
+
+ wget ...
+
+!setup.rbを実行する
+
+setup.rbを実行するとCGIの動作環境を準備することができます。
+
+ ruby setup.rb
+
+上記コマンドを実行すると、カレントディレクトリにcgiディレクトリが作られ、CGI動作に必要な各種ファイルが作られます。
+
+引数でcgiを設置するディレクトリを直接指定することもできます。
+
+ ruby setup.rb ~/public_html/bilbo
+
+上記コマンドを実行すると、~/public_html/bilboというディレクトリを作成し、必要なファイルを作成します。
+すでに存在するファイルをsetup.rbが上書きすることはありません。
+
+尚、CGIスクリプトは、setup.rbの置いてあるlibディレクトリにあるライブラリを参照します。
+
+!.htaccessを書き換える
+
+作成したCGIディレクトリの設定ファイルを書き換えます。
+
+.htaccessを編集します。
+
+ cd ~/public_html/bilbo
+ vim .htaccess
+
+最初の3行を環境に合わせて修正してください。
+
+ #Options +ExecCGI
+ AddHandler cgi-script .cgi
+ DirectoryIndex index.cgi
+
+ちなみに、さくらインターネットではデフォルト設定で動作するので、修正は不要です。
+
+ブラウザからindex.cgiにアクセスしてみてください。デフォルト設定ではBilboに添付されているサンプル記事が表示されます。
+
+うまく動かない場合は、次のコマンドで原因がわかるかもしれません。
+
+ echo "" | ./index.cgi > test.html
+
+もし、上記コマンドでtest.htmlにトップページのHTMLが出力されているなら、エラーの原因はサーバー環境のCGI設定にある可能性が高いです。
+
+!設定ファイル（bilborc）を書き換える
+
+Bilboの設定は、ジェネレートしたCGIディレクトリにあるbilborcに記述します。
+
+bilborc
+
+<<<
+def root_path
+  File.dirname(File.expand_path(__FILE__)).untaint
+end
+
+def config
+  {
+    :title => 'The Bilbo Diary',                    # ←ブログのタイトル
+    :dir   => {
+      :entries => '/home/xxx/bilbo/data_sample',    # ←この行を書き換える
+      :views   => '/home/xxx/bilbo/views',
+      :plugins => "#{root_path}/config/plugins",
+    },
+  （略）
+>>>
+
+「:entries」の値を書き換えます。ここには記事データを置くディレクトリを記述します。
+
+例えば、記事データを/home/dan/bilbo_dbディレクトリに置く場合は次のように書き換えます。
+
+ :entries => '/home/dan/bilbo_db',
+
+基本的にはこれだけでOKです。
+
+!記事を作成する
+
+記事はbirborcで設定したディレクトリにテキストファイルで作成します。
+1ファイルが1件のエントリとなります。
+
+ファイル名が記事の日付を表します。
+
+* 20080303.txt …… 2008年03月03日の日記
+* 20080303_1.txt …… 2008年03月03日の日記1
+* 20080303_2.txt …… 2008年03月03日の日記2
+
+原稿の文字コードにはUTF-8を使用してください。
+
+デフォルトでは拡張子を.txtにするとHikiDocによって原稿がコンパイルされます。
+コンパイラは原稿の拡張子によって決定します。
+拡張子とコンパイラの関連付けは[[bilborc|?bilborc]]で行います。
+
+

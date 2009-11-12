@@ -1,0 +1,18 @@
+![開発ログ]render_viewをhelper.rbに移動した
+
+これまでrender_viewメソッドは、コントローラに定義してあった。
+
+<<<
+def render_view(name, b = binding)
+  erb = Plugin.views[name] || (chdir(:views) { File.read("#{name}.html.erb") })
+  ERB.new(erb).result(b) rescue "<h3>ViewError in #{h name}</h3>#{h $!}<pre>#{$@.join("\n")}</pre>"
+end
+>>>
+
+Controllerクラスのインスタンスメソッドなので、こいつをプラグインやビューの中で呼び出すときは、
+コントローラオブジェクトのbindingが必要だった。
+
+考えてみると、これはERBに依存した処理なので、ヘルパに移動させればコアはERBに依存しなくなる。
+この例えばプラグインでrender_viewを再定義すれば、テンプレートエンジンを容易に切り替えることもできる。
+
+Controllerのbindingから開放されたことで、小回りが利くようになった。

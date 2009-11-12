@@ -1,0 +1,20 @@
+#
+# Bilbo default .htaccess
+#
+
+#Options +ExecCGI
+AddHandler cgi-script .cgi
+DirectoryIndex index.cgi
+
+<Files bilborc>
+  deny from all
+</Files>
+<FilesMatch "^(config)$">
+  deny from all
+</FilesMatch>
+<Files *.rb>
+  deny from all
+</Files>
+<Files *.erb>
+  deny from all
+</Files>

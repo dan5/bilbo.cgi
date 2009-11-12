@@ -1,0 +1,24 @@
+<html lang="ja-JP">
+<%= Plugin.render_hook(:before_header) %>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <meta http-equiv="Content-Script-Type" content="text/javascript">
+  <title><%= @title or config[:title] %></title>
+  <% [config[:css] || 'stylesheets/bilbo.css'].flatten.each do |e| %>
+  <link rel="stylesheet" href="<%= e %>" type="text/css" media="all"><% end %>
+  <link rel="shortcut icon" href="favicon.ico">
+  <%= Plugin.render_hook(:header) %>
+</head>
+<body>
+<div class="main">
+<%= Plugin.render_hook(:flavour_header) %>
+<div class="content">
+  <div class="before_content"><%= Plugin.render_hook(:before_content) %></div>
+  <%= yield %>
+  <div class="after_content"><%= Plugin.render_hook(:after_content) %></div>
+</div>
+<%= Plugin.render_hook(:flavour_footer) %>
+</div>
+</body>
+</html>

@@ -1,0 +1,43 @@
+![プラグイン]namedpage.rb
+
+通常の日記とは別に、名前つきページも管理できるようにしたかった。
+そこで次のようなプラグインnamedpage.rbを書いた。
+
+<<<
+class Controller
+  def named
+    @page_name = params[:name] || params.index(nil).to_s
+    @entry = Entry.find(@page_name, :limit => 1, :complete_label => true).first
+    render(:entry)
+  end
+end
+
+def default_action
+  params.index(nil) ? :named : :list
+end
+>>>
+
+コントローラにnamedアクションを定義する。
+namedアクションはデータディレクトリにあるファイル名を受け取ってそのファイルを表示する。
+
+namedアクションは、次のようにして呼び出す。
+
+ /?action=named&name=about
+
+上のパラメータでは「about.*」というファイルをデータディレクトリから探して表示する。
+
+「action=」は省略可能なので、次のように書くことも可能。
+
+ /?named&name=about
+
+さらにひと工夫してあって、次のようなパラメータがURLに与えられたときは、名前つきページを表示することにした。
+
+ /?about
+
+上のようなパラメータは、paramsに次のように格納される。
+
+ params #=> { :about => nil }
+
+値がnilのパラメータが与えられたときに、aboutというアクションが定義されていなければ、パラメータそのものをページ名として解釈してnamedアクションを起動してしまうわけだ。
+
+例えば、次のようなページはこの名前つきページとして実現されている→ [[about]]

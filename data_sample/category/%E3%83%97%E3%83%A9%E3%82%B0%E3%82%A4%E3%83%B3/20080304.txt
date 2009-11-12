@@ -1,0 +1,78 @@
+![プラグイン]プラグインの作り方
+
+!!ソースファイルを用意する
+
+最初にソースファイルを新規に作成します。
+ここで作成するプラグインの名前は「myplugin」とします。
+myplugin.rbをconfig/pluginsディレクトリに作成してください。
+
+ vim config/plugins/myplugin.rb
+
+config/pluginsディレクトリにある「.rb」ファイルはすべてシステム起動時にloadされます。
+loadの順番はファイル名によって決まります。
+ファイル名は、ロード順序以外に影響しないので、好きな名前を付けてください。
+
+* プラグインロードの実装: lib/bilbo.rbのPlugin.loadメソッド
+
+!!文字列を表示する
+
+myplugin.rbに次のように書き込みます。
+
+<<<
+Plugin.add_hook(:before_entries) {
+  "Hello, World!"
+}
+>>>
+
+このサンプルは、エントリーリストの直前に「Hello, World!」を表示します。:before_entriesは、
+エントリーリストの直前を示すシンボルです。
+シンボルで文字列を埋め込む場所を指定します。
+エントリーポイントには次のものがあります。
+
+* :before_entries …… エントリーリストの直前
+* :after_entries …… エントリーリストの直後
+* その他、views/layout.html.erb等のビューファイルを参照
+
+!!アクションを作る
+
+プラグインによって新たなアクションを定義することもできます。
+
+<<<
+class Controller
+  def myaction
+    'myaction!!'
+  end
+end
+>>>
+
+myplugin.rbに上のようなmyactionメソッドを定義した後、
+bilbo/?myaction（bilboの部分はbilboを設置したURLに置き換えてください）にアクセスしてください。
+ブラウザには次のように表示されます。
+
+ myaction!!
+
+「myaction!!」という文字列は、レイアウト（views/layout.html.erb）の中に埋め込まれます。
+これでmyactionアクションを追加することができました。
+
+プラグインでビューを使用する場合は、次のようにします。
+
+<<<
+class Controller
+  def myaction
+    render(:myaction)
+  end
+end
+
+Plugin.views[:myaction] = <<VIEW
+<div class="archives">
+<h2>MyAction</h2>
+  <p>Hello...</p>
+  <p>ただいまの時間は「<%=h Time.now %>」です。</p>
+</div>
+VIEW
+>>>
+
+ビューを使用すると、テンプレートの内容がレイアウトの中に埋め込まれた状態でページが描画されます。
+Plugin.viewsはビューテンプレートを格納するハッシュです。
+
+* ビュー処理の実装: lib/bilbo.rbのPlugin.viewsメソッド
